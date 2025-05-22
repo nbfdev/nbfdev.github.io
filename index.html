@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBFDEV</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode.js/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #2a2a2a, #1a1a1a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+            100% { opacity: 0; transform: scale(1); }
+        }
+
+        .header {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4CAF50;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
+            50% { text-shadow: 0 0 20px rgba(76, 175, 80, 0.8); }
+            100% { text-shadow: 0 0 10px rgba(76, 175, 80, 0.5); }
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 2rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #4CAF50;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 100px auto 0;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="100%" height="100%" fill="none"/><path d="M0,100 C50,0 150,0 200,100 C150,200 50,200 0,100" fill="rgba(76, 175, 80, 0.1)"/></svg>') center/cover;
+            animation: wave 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0) scale(1); }
+            50% { transform: translateX(-25%) scale(1.2); }
+            100% { transform: translateX(0) scale(1); }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #4CAF50;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #ffffff;
+            opacity: 0.9;
+        }
+
+        .downloads {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .download-card {
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .program-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .program-image:hover {
+            transform: scale(1.05);
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, transparent 70%);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            z-index: -1;
+        }
+
+        .download-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.2);
+        }
+
+        .download-card:hover::before {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .download-card i {
+            font-size: 3rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }
+
+        .download-card h3 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            width: 80%;
+            max-width: 250px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.2);
+        }
+
+        .download-btn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        .download-btn:hover i {
+            transform: translateY(2px);
+        }
+
+        .download-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .download-btn:hover::before {
+            left: 100%;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .download-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Mobile Responsiveness */
+        @media screen and (max-width: 768px) {
+            .header {
+                padding: 0.8rem;
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+
+            .hero {
+                padding: 4rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+                padding: 0 1rem;
+            }
+
+            .downloads {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1rem;
+            }
+
+            .download-card {
+                padding: 1.5rem;
+            }
+
+            .download-card i {
+                font-size: 2.5rem;
+            }
+
+            .download-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .download-btn {
+                width: 100%;
+                padding: 0.8rem 1.5rem;
+            }
+
+            .developer-container {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .program-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media screen and (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .download-card {
+                padding: 1.2rem;
+            }
+
+            .download-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Add download count and size info */
+        .download-info {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .download-info span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .download-info i {
+            font-size: 0.8rem;
+            color: #4CAF50;
+        }
+
+        /* Loading animation for download button */
+        .download-btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .download-btn.loading i {
+            animation: downloading 1s infinite;
+        }
+
+        @keyframes downloading {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(3px); }
+            100% { transform: translateY(0); }
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Developer Section Styles */
+        .developer-section {
+            background: rgba(30, 30, 30, 0.9);
+            padding: 3rem 1rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .developer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .developer-info {
+            text-align: center;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .developer-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .developer-name {
+            font-size: 1.5rem;
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        .developer-role {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .qr-container {
+            text-align: center;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .qr-code {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .qr-title {
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Download Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-top: 1rem;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .download-counter {
+            font-size: 1.2rem;
+            color: #4CAF50;
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Donation Section Styles */
+        .donation-section {
+            background: linear-gradient(45deg, rgba(30, 30, 30, 0.9), rgba(40, 40, 40, 0.9));
+            padding: 4rem 1rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(76, 175, 80, 0.3);
+            text-align: center;
+        }
+
+        .donation-title {
+            color: #4CAF50;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .donation-description {
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .donation-methods {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .donation-method {
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            min-width: 280px;
+            flex: 1;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .donation-method:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.2);
+        }
+
+        .donation-method h3 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .donation-qr {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem auto;
+            width: fit-content;
+        }
+
+        .donation-qr img {
+            width: 150px;
+            height: 150px;
+        }
+
+        .donation-info {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 1rem 0;
+        }
+
+        .donation-account {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: #4CAF50;
+        }
+
+        .copy-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        .copy-btn.copied {
+            background: #2E7D32;
+        }
+
+        .donation-amount {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .amount-btn {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .amount-btn:hover {
+            background: #4CAF50;
+            transform: scale(1.05);
+        }
+
+        @media screen and (max-width: 768px) {
+            .donation-methods {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .donation-method {
+                min-width: 100%;
+            }
+
+            .donation-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">NBFDEV</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#downloads">Downloads</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section id="home" class="hero">
+            <h1>Welcome to NBFDEV</h1>
+            <p>Discover Our Premium Collection of Tools</p>
+        </section>
+
+        <section id="downloads" class="downloads">
+            <div class="download-card">
+                <img src="https://via.placeholder.com/200x200.png?text=Desktop+App" alt="Desktop Application" class="program-image">
+                <i class="fas fa-desktop"></i>
+                <h3>Desktop Application</h3>
+                <p>Powerful desktop tools for professional development.</p>
+                <div class="download-info">
+                    <span><i class="fas fa-download"></i> <span class="download-count" data-count="0">0</span></span>
+                    <span><i class="fas fa-file-archive"></i> 25MB</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <a href="#" class="download-btn" data-program="desktop" onclick="simulateDownload(this)">
+                    <i class="fas fa-download"></i>
+                    <span>Download Now</span>
+                </a>
+            </div>
+
+            <div class="download-card">
+                <img src="https://via.placeholder.com/200x200.png?text=Mobile+Tools" alt="Mobile Tools" class="program-image">
+                <i class="fas fa-mobile-alt"></i>
+                <h3>Mobile Tools</h3>
+                <p>Essential tools for mobile development and testing.</p>
+                <div class="download-info">
+                    <span><i class="fas fa-download"></i> <span class="download-count" data-count="0">0</span></span>
+                    <span><i class="fas fa-file-archive"></i> 15MB</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <a href="#" class="download-btn" data-program="mobile" onclick="simulateDownload(this)">
+                    <i class="fas fa-download"></i>
+                    <span>Download Now</span>
+                </a>
+            </div>
+
+            <div class="download-card">
+                <img src="https://via.placeholder.com/200x200.png?text=Developer+Kit" alt="Developer Kit" class="program-image">
+                <i class="fas fa-code"></i>
+                <h3>Developer Kit</h3>
+                <p>Complete development kit with advanced features.</p>
+                <div class="download-info">
+                    <span><i class="fas fa-download"></i> <span class="download-count" data-count="0">0</span></span>
+                    <span><i class="fas fa-file-archive"></i> 40MB</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <a href="#" class="download-btn" data-program="devkit" onclick="simulateDownload(this)">
+                    <i class="fas fa-download"></i>
+                    <span>Download Now</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Developer Section -->
+        <section class="developer-section">
+            <div class="developer-container">
+                <div class="developer-info">
+                    <img src="https://via.placeholder.com/150x150.png?text=Developer" alt="Developer" class="developer-avatar">
+                    <h3 class="developer-name"> Developer</h3>
+                    <p class="developer-role">Lead Developer & Designer</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="qr-container">
+                    <h3 class="qr-title">Scan to Visit</h3>
+                    <div id="qrCode" class="qr-code"></div>
+                    <p>Scan this QR code to visit our website</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Donation Section -->
+        <section class="donation-section">
+            <h2 class="donation-title">Support the Developer</h2>
+            <p class="donation-description">
+                Your support helps us continue developing and maintaining our software. 
+                Choose your preferred donation method below. Every contribution makes a difference!
+            </p>
+            
+            <div class="donation-methods">
+                <div class="donation-method">
+                    <h3><i class="fas fa-qrcode"></i> Prompt Pay</h3>
+                    <div class="donation-qr">
+                        <img src="https://via.placeholder.com/150x150.png?text=PromptPay+QR" alt="PromptPay QR">
+                    </div>
+                    <div class="donation-info">
+                        <p>Scan QR Code or use ID:</p>
+                        <div class="donation-account">0-0000-00000-00-0</div>
+                        <button class="copy-btn" onclick="copyToClipboard(this, '0-0000-00000-00-0')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="donation-amount">
+                        <button class="amount-btn" onclick="setAmount(20)">฿20</button>
+                        <button class="amount-btn" onclick="setAmount(50)">฿50</button>
+                        <button class="amount-btn" onclick="setAmount(100)">฿100</button>
+                    </div>
+                </div>
+
+                <div class="donation-method">
+                    <h3><i class="fas fa-university"></i> Bank Transfer</h3>
+                    <div class="donation-info">
+                        <p>Bank: XXX Bank</p>
+                        <p>Account Name: Developer Name</p>
+                        <div class="donation-account">XXX-X-XXXXX-X</div>
+                        <button class="copy-btn" onclick="copyToClipboard(this, 'XXX-X-XXXXX-X')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <div class="donation-qr">
+                        <img src="https://via.placeholder.com/150x150.png?text=Bank+QR" alt="Bank QR">
+                    </div>
+                </div>
+
+                <div class="donation-method">
+                    <h3><i class="fab fa-paypal"></i> PayPal</h3>
+                    <div class="donation-qr">
+                        <img src="https://via.placeholder.com/150x150.png?text=PayPal+QR" alt="PayPal QR">
+                    </div>
+                    <div class="donation-info">
+                        <p>PayPal Email:</p>
+                        <div class="donation-account">developer@email.com</div>
+                        <button class="copy-btn" onclick="copyToClipboard(this, 'developer@email.com')">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <a href="#" class="download-btn" style="margin-top: 1rem;">
+                        <i class="fab fa-paypal"></i> Donate with PayPal
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 NBFDEV. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numberOfStars = 150;
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 3;
+                const delay = Math.random() * 2;
+                const duration = 2 + Math.random() * 3;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDelay = `${delay}s`;
+                star.style.animationDuration = `${duration}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        window.addEventListener('load', createStars);
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Initialize download counts from localStorage or set to 0
+        function initializeDownloadCounts() {
+            const downloadCounts = document.querySelectorAll('.download-count');
+            downloadCounts.forEach(counter => {
+                const program = counter.closest('.download-card').querySelector('.download-btn').dataset.program;
+                const count = localStorage.getItem(`${program}_downloads`) || 0;
+                counter.textContent = count;
+                counter.dataset.count = count;
+            });
+        }
+
+        // Simulate download with progress bar
+        function simulateDownload(button) {
+            if (button.classList.contains('loading')) return;
+            
+            const card = button.closest('.download-card');
+            const progressBar = card.querySelector('.progress-bar');
+            const progressFill = card.querySelector('.progress-fill');
+            const counter = card.querySelector('.download-count');
+            const program = button.dataset.program;
+            
+            button.classList.add('loading');
+            progressBar.style.display = 'block';
+            const originalText = button.innerHTML;
+            button.innerHTML = `
+                <i class="fas fa-download"></i>
+                <span>Downloading...</span>
+            `;
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 1;
+                progressFill.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        button.classList.remove('loading');
+                        button.innerHTML = originalText;
+                        progressBar.style.display = 'none';
+                        progressFill.style.width = '0%';
+                        
+                        // Increment download counter
+                        const currentCount = parseInt(counter.dataset.count) + 1;
+                        counter.textContent = currentCount;
+                        counter.dataset.count = currentCount;
+                        localStorage.setItem(`${program}_downloads`, currentCount);
+                        
+                        alert('Download completed!');
+                    }, 500);
+                }
+            }, 50);
+        }
+
+        // Generate QR Code
+        function generateQRCode() {
+            const qrCode = new QRCode(document.getElementById("qrCode"), {
+                text: window.location.href,
+                width: 128,
+                height: 128
+            });
+        }
+
+        // Initialize everything when page loads
+        window.addEventListener('load', () => {
+            createStars();
+            initializeDownloadCounts();
+            generateQRCode();
+        });
+
+        // Add touch support for mobile devices
+        document.addEventListener('touchstart', function() {}, true);
+
+        // Copy to clipboard function
+        function copyToClipboard(button, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                button.classList.add('copied');
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                }, 2000);
+            });
+        }
+
+        // Set donation amount (for PromptPay)
+        function setAmount(amount) {
+            // Here you can implement the logic to update the QR code with the selected amount
+            alert(`Selected amount: ฿${amount}`);
+            // You would typically regenerate the QR code with the new amount
+        }
+    </script>
+</body>
+</html> 
